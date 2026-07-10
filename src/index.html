@@ -3137,6 +3137,8 @@ html.light #body-bg-video { opacity: 0.35; }
 </style>
 </head>
 <body>
+<!-- Skip to content (first focusable · WCAG 2.4.1 bypass block) -->
+<a class="skip-link" href="#summary">Skip to content</a>
 <!-- ══ BODY BACKGROUND VIDEO — shows behind all sections ══ -->
 <video id="body-bg-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:-10;pointer-events:none;opacity:0.45;">
   <source src="assets/media/videos/vid_e7b8e07d00ab.mp4" type="video/mp4">
@@ -4467,7 +4469,10 @@ function spark(id, data, color) {
   });
 }
 
-window.addEventListener('load', function() {
+/* Charts are built lazily: construction is deferred until the #dashboard
+   section (which holds every canvas) approaches the viewport. Datasets,
+   options, colours and canvas ids are unchanged — only the timing moves. */
+function __buildDashboardCharts() {
   if (typeof Chart === 'undefined') return;
 
   /* ── Sparklines ── */
@@ -4685,7 +4690,50 @@ window.addEventListener('load', function() {
       animation: { duration: 1500, easing: 'easeOutQuart' }
     }
   });
-});
+}
+
+/* Lazy trigger — build the dashboard charts once, deferred past the initial
+   paint. Because the dashboard opens in a detail overlay that can be reached by
+   a nav link or a deep-link (not only by scrolling), the build is guaranteed by
+   several idempotent triggers so a chart is never displayed before it is built:
+     1. IntersectionObserver — when #dashboard nears the viewport (scroll path).
+     2. Capture-phase click — before any link/row that opens #dashboard fires.
+     3. Deep-link at load — if the URL already points at #dashboard.
+     4. Idle/timeout fallback — always builds shortly after load.
+   Chart.js measures its container at construction, so building on any of these
+   paths renders correctly. Falls back to an immediate build with no support. */
+(function () {
+  var built = false;
+  function build() { if (built) return; built = true; __buildDashboardCharts(); }
+
+  function arm() {
+    var dash = document.getElementById('dashboard');
+    if (!dash) { build(); return; }
+
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { build(); io.disconnect(); } });
+      }, { root: null, rootMargin: '300px 0px 300px 0px', threshold: 0.01 });
+      io.observe(dash);
+    }
+
+    /* Build before the detail overlay opens for #dashboard (nav link / row click). */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[href="#dashboard"]');
+      if (a || (e.target.closest && e.target.closest('#dashboard'))) build();
+    }, true);
+
+    /* Deep-link straight to the dashboard detail view. */
+    if (location.hash === '#dashboard') build();
+
+    /* Guaranteed fallback: build during idle time, or after a short timeout. */
+    if ('requestIdleCallback' in window) window.requestIdleCallback(build, { timeout: 1800 });
+    else setTimeout(build, 1600);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arm);
+  else arm();
+})();
 </script>
 
 
@@ -4741,8 +4789,8 @@ window.addEventListener('load', function() {
       for (const it of items){
         if (it.target.offsetTop <= y) current = it;
       }
-      links.forEach(l => l.classList.remove('is-active'));
-      if (current) current.link.classList.add('is-active');
+      links.forEach(l => { l.classList.remove('is-active'); l.removeAttribute('aria-current'); });
+      if (current){ current.link.classList.add('is-active'); current.link.setAttribute('aria-current', 'page'); }
       activeTicking = false;
     }
     window.addEventListener('scroll', () => {
@@ -6737,6 +6785,113 @@ html.dl-ready section.section:not(#cover):not(#summary):not(#branding):hover::be
   }
   if(document.readyState==='complete') setTimeout(setup,80);
   else window.addEventListener('load',function(){ setTimeout(setup,80); });
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     A11Y · NAVIGATION · PERFORMANCE  (additive · zero regression)
+     Skip link · Back-to-top · content-visibility perf hints
+     Builds on the existing scroll-progress + active-nav augmentation.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="a11y-nav-perf">
+/* ── Skip to content (WCAG 2.4.1) — first focusable, revealed on focus ── */
+.skip-link{
+  position:fixed;top:0;left:0;z-index:100000;
+  transform:translateY(-140%);
+  padding:12px 18px;
+  background:#0d1430;color:#f4f7ff;
+  font:600 13px/1 'Inter','Plus Jakarta Sans',system-ui,sans-serif;
+  letter-spacing:.01em;text-decoration:none;
+  border:1px solid rgba(150,180,235,.55);
+  border-radius:0 0 12px 0;
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.6);
+  transition:transform .18s cubic-bezier(.22,1,.36,1);
+}
+.skip-link:focus,
+.skip-link:focus-visible{ transform:translateY(0); outline:2px solid #56b4ff; outline-offset:2px; }
+
+/* ── aria-current mirrors .is-active on the top nav (styling already present) ── */
+.top-nav .nav-item[aria-current="page"]{ color:#fff; }
+
+/* ── Back to top ── */
+.back-to-top{
+  position:fixed;right:24px;bottom:24px;z-index:900;
+  width:46px;height:46px;display:inline-flex;
+  align-items:center;justify-content:center;
+  border-radius:999px;cursor:pointer;
+  color:#eaf1ff;
+  background:rgba(13,20,48,.72);
+  border:1px solid rgba(150,180,235,.34);
+  box-shadow:0 12px 30px -10px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset;
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  opacity:0;transform:translateY(14px) scale(.9);pointer-events:none;
+  transition:opacity .25s cubic-bezier(.22,1,.36,1),transform .25s cubic-bezier(.22,1,.36,1),border-color .25s ease,background .25s ease;
+}
+.back-to-top.show{ opacity:1;transform:translateY(0) scale(1);pointer-events:auto; }
+.back-to-top:hover{
+  border-color:rgba(150,180,235,.6);
+  background:rgba(16,26,58,.85);
+  transform:translateY(-2px) scale(1.04);
+}
+.back-to-top:focus-visible{ outline:2px solid #56b4ff;outline-offset:3px; }
+.back-to-top svg{ width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round; }
+html.light .back-to-top{
+  color:#0f172a;
+  background:rgba(255,255,255,.82);
+  border-color:rgba(15,23,42,.14);
+  box-shadow:0 12px 30px -10px rgba(15,23,42,.28);
+}
+html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgba(15,23,42,.24); }
+@media(max-width:600px){ .back-to-top{ right:16px;bottom:16px;width:42px;height:42px; } }
+
+/* ── Performance: skip rendering of below-the-fold text sections until near
+      viewport. Chart/canvas, hero and reveal-measured sections are excluded.
+      contain-intrinsic-size reserves height → no layout shift (CLS-safe). ── */
+#positioning,#achievements,#transformation,#erp,
+#performance,#ai,#education,#branding{
+  content-visibility:auto;
+  contain-intrinsic-size:auto 1000px;
+}
+
+/* ── Motion-safe: honour reduced-motion for the new controls ── */
+@media (prefers-reduced-motion: reduce){
+  .skip-link,.back-to-top{ transition:none; }
+}
+</style>
+<script id="a11y-nav-perf-js">
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── Back-to-top button ── */
+  var btn = document.createElement('button');
+  btn.className = 'back-to-top';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Back to top');
+  btn.setAttribute('title', 'Back to top');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 15 12 9 18 15"/></svg>';
+  btn.addEventListener('click', function(){
+    var top = document.getElementById('cover') || document.body;
+    if (reduce){ window.scrollTo(0, 0); }
+    else { top.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    var brand = document.querySelector('.top-nav .brand');
+    if (brand && typeof brand.focus === 'function') brand.focus({ preventScroll: true });
+  });
+
+  function mount(){ document.body.appendChild(btn); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);
+  else mount();
+
+  var ticking = false;
+  function update(){
+    var show = (window.scrollY || document.documentElement.scrollTop) > window.innerHeight * 0.9;
+    btn.classList.toggle('show', show);
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if (!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  update();
 })();
 </script>
 </body>
