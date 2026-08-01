@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- PWA · installable app metadata -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#05070f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="M. Ibrahim">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
 <title>Mohanad Ibrahim · Executive Finance Transformation Portfolio · MENA &amp; GCC 2026</title>
 <meta name="description" content="ATS-optimized Executive Finance Transformation Portfolio — Mohanad Ibrahim. Strategic Finance Business Partner · Finance Transformation Leader · Financial Governance Specialist. 8+ years across Egypt and the UAE.">
 <meta name="author" content="Mohanad Ibrahim">
@@ -6892,6 +6902,18 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
     if (!ticking){ requestAnimationFrame(update); ticking = true; }
   }, { passive: true });
   update();
+})();
+</script>
+
+<!-- PWA · register the service worker (offline app shell + installability) -->
+<script id="pwa-sw-register">
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  // Service workers require a secure context (https or localhost); skip on file://.
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () { /* non-fatal */ });
+  });
 })();
 </script>
 </body>

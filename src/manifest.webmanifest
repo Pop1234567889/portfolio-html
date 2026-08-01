@@ -1,0 +1,35 @@
+{
+  "name": "Mohanad Ibrahim — Executive Finance Portfolio",
+  "short_name": "M. Ibrahim",
+  "description": "Executive Finance Transformation Portfolio — Strategic Finance Business Partner, Finance Transformation Leader, Financial Governance Specialist.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": ".",
+  "scope": ".",
+  "id": "mohanad-ibrahim-portfolio",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "background_color": "#05070f",
+  "theme_color": "#05070f",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    {
+      "src": "assets/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
