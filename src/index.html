@@ -6898,5 +6898,228 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
   update();
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     UNIFIED DESIGN TOKENS · 2026
+     Single semantic layer bridging the two pre-existing token systems:
+       · the base cinematic palette   (--bg-*, --ink-*, --mint, --blue, …)
+       · the --rd-* premium scale     (--rd-r-*, --rd-s-*, --rd-ink-*, …)
+     Every --ds-* token is an ALIAS. No literal colour, size, or shadow value
+     is introduced or altered here, so rendering is byte-identical. This block
+     exists to give downstream code one vocabulary to target.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="design-tokens">
+:root{
+  /* ── SURFACE RAMP ─────────────────────────────────────────────── */
+  --ds-surface-base:      var(--bg-0);
+  --ds-surface-raised:    var(--bg-1);
+  --ds-surface-overlay:   var(--bg-2);
+  --ds-surface-glass:     var(--rd-surface);
+  --ds-surface-glass-2:   var(--rd-surface-2);
+  --ds-surface-glass-3:   var(--rd-surface-3);
+  --ds-surface-inset:     var(--rd-inset);
+
+  /* ── INK RAMP · AA-lifted on dark ─────────────────────────────── */
+  --ds-ink-primary:       var(--rd-ink);
+  --ds-ink-secondary:     var(--rd-ink-2);
+  --ds-ink-tertiary:      var(--rd-ink-3);
+  --ds-ink-muted:         var(--rd-ink-4);
+  --ds-ink-inverse:       var(--ink-inv);
+
+  /* ── HAIRLINES ────────────────────────────────────────────────── */
+  --ds-line:              var(--rd-line);
+  --ds-line-strong:       var(--rd-line-2);
+  --ds-line-hover:        var(--rd-line-hover);
+
+  /* ── ACCENTS · semantic mapping of the cinematic palette ──────── */
+  --ds-accent-primary:    var(--blue);     /* interactive / focus     */
+  --ds-accent-success:    var(--mint);     /* positive delta · CTA    */
+  --ds-accent-brand:      var(--violet);   /* brand / section accent  */
+  --ds-accent-warning:    var(--gold);     /* caution · pending       */
+  --ds-accent-danger:     var(--coral);    /* negative delta          */
+
+  /* ── SPACING · 8pt rhythm ─────────────────────────────────────── */
+  --ds-space-1:           var(--rd-s-1);   /*  8px */
+  --ds-space-2:           var(--rd-s-2);   /* 16px */
+  --ds-space-3:           var(--rd-s-3);   /* 24px */
+  --ds-space-4:           var(--rd-s-4);   /* 32px */
+  --ds-space-5:           var(--rd-s-5);   /* 40px */
+  --ds-space-6:           var(--rd-s-6);   /* 48px */
+
+  /* ── RADIUS ───────────────────────────────────────────────────── */
+  --ds-radius-sm:         var(--rd-r-sm);  /* 12px */
+  --ds-radius-md:         var(--rd-r-md);  /* 16px */
+  --ds-radius-lg:         var(--rd-r-lg);  /* 20px */
+  --ds-radius-xl:         var(--rd-r-xl);  /* 24px */
+  --ds-radius-pill:       var(--rd-r-pill);
+
+  /* ── ELEVATION ────────────────────────────────────────────────── */
+  --ds-elevation-1:       var(--rd-shadow);
+  --ds-elevation-2:       var(--rd-shadow-2);
+  --ds-focus-ring:        var(--rd-ring);
+
+  /* ── TYPE ─────────────────────────────────────────────────────── */
+  --ds-font-ui:           var(--rd-font);
+
+  /* ── TOUCH TARGET · WCAG 2.5.8 floor ──────────────────────────── */
+  --ds-tap-min:           44px;
+
+  /* ── SECTION GUTTER · drives the responsive tiers below ───────── */
+  --ds-gutter:            96px;
+  --ds-rhythm:            120px;
+}
+
+@media(max-width:1280px){ :root{ --ds-gutter:56px; --ds-rhythm:104px } }
+@media(max-width:1024px){ :root{ --ds-gutter:40px; --ds-rhythm:96px  } }
+@media(max-width:720px){  :root{ --ds-gutter:22px; --ds-rhythm:88px  } }
+@media(max-width:600px){  :root{ --ds-gutter:18px; --ds-rhythm:72px  } }
+@media(max-width:420px){  :root{ --ds-gutter:16px; --ds-rhythm:64px  } }
+@media(max-width:360px){  :root{ --ds-gutter:14px; --ds-rhythm:56px  } }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MOBILE LAYER · 2026
+     Phone-tier wayfinding, spacing rhythm, touch targets, and data-surface
+     overflow. Desktop rendering (>860px) is deliberately untouched.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="mobile-layer">
+
+/* ── 1 · SECTION RHYTHM below 600px ────────────────────────────────
+   The pre-existing tiers stop at 720px. These continue the ramp using
+   the token scale so small phones stop wasting a third of the viewport
+   on padding. Sections keep min-height:auto from the 720px tier.       */
+@media(max-width:600px){
+  .section{ padding:var(--ds-rhythm) var(--ds-gutter) }
+  .sec-num{ right:var(--ds-gutter) }
+}
+
+/* ── 2 · MOBILE WAYFINDING ────────────────────────────────────────
+   Previously every .nav-item:not(.cta) was display:none below 860px,
+   leaving only the brand and the mailto CTA — and Quick Jump, which is
+   JS-injected, so a phone with JS disabled had no section links at all.
+   The links are restored as a horizontally scrollable rail. Quick Jump
+   remains as the progressive enhancement on top.                       */
+@media(max-width:860px){
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding-top:max(8px, env(safe-area-inset-top));
+  }
+  .top-nav{
+    position:static; transform:none;
+    left:auto; top:auto;
+    margin:0 8px;
+    border-radius:var(--ds-radius-lg);
+    padding:6px 8px;
+    gap:2px;
+    display:flex; flex-wrap:nowrap; align-items:center;
+    /* must beat .top-nav{justify-content:center} from the ≤720px tier:
+       centering a scrollable flex container overflows on BOTH sides and
+       makes the leading items unreachable. */
+    justify-content:flex-start;
+    overflow-x:auto; overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+    overscroll-behavior-x:contain;
+  }
+  .top-nav::-webkit-scrollbar{ display:none }
+
+  /* Restore the section links the old rules hid. Two rules hid them:
+       ≤860px  .top-nav .nav-item:not(.cta)                              (0,3,0)
+       ≤720px  .nav-item:not(.cta):not(.brand) ~ .nav-item:not(.cta)     (0,5,0)
+     The second outranks a plain override, so it is matched here at (0,6,0). */
+  .top-nav .nav-item:not(.cta){ display:inline-flex }
+  .top-nav .nav-item:not(.cta):not(.brand) ~ .nav-item:not(.cta){ display:inline-flex }
+
+  /* The brand scrolls with the rail rather than pinning. A sticky brand over
+     a translucent glass bar lets the scrolled links bleed through underneath,
+     and an opaque backing would break the glassmorphic treatment. */
+  .top-nav .brand{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    padding-right:6px;
+  }
+  .top-nav .brand span:not(.brand-mark){
+    max-width:0; overflow:hidden; white-space:nowrap;
+    opacity:0; transition:none;
+  }
+
+  .top-nav .nav-item{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    display:inline-flex; align-items:center;
+    min-height:var(--ds-tap-min);
+    padding:0 12px;
+    font-size:12.5px;
+    white-space:nowrap;
+  }
+  .top-nav .nav-item.cta{
+    margin-left:4px;
+    padding:0 16px;
+    min-height:var(--ds-tap-min);
+  }
+
+  /* the fixed rail now occupies real estate at the top of the viewport */
+  .section{ scroll-margin-top:72px }
+}
+
+/* ── 3 · TOUCH TARGETS · WCAG 2.5.8 ──────────────────────────────── */
+@media(max-width:860px){
+  .qj-link{
+    min-height:var(--ds-tap-min);
+    display:flex; align-items:center;
+  }
+  .dl-trigger .dl-go{
+    width:var(--ds-tap-min); height:var(--ds-tap-min);
+  }
+  .dl-trigger .dl-go svg{ width:18px; height:18px }
+  .theme-toggle,.quick-jump-trigger{
+    min-height:var(--ds-tap-min);
+  }
+  .dv-back{ min-height:var(--ds-tap-min) }
+}
+
+/* ── 4 · DATA SURFACES · horizontal overflow containment ──────────
+   .ratio-table is a 5-column border-collapse table with 16-18px cell
+   padding — it cannot reflow below ~520px without truncating content.
+   Every column and every cell is preserved; the table scrolls inside
+   its own container so the page body never scrolls horizontally.      */
+@media(max-width:860px){
+  .ratio-table{
+    display:block;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    white-space:nowrap;
+    border-collapse:collapse;
+  }
+  .ratio-table thead th{ padding:12px 14px; font-size:10px }
+  .ratio-table tbody td{ padding:12px 14px; font-size:12px }
+}
+
+/* ── 5 · CHART LEGIBILITY on phones ───────────────────────────────
+   .chart-grid already collapses to one column at 1024px, but the
+   canvases keep desktop heights. No Chart.js dataset or option is
+   touched — only the container box.                                   */
+@media(max-width:600px){
+  .chart-canvas{ height:240px }
+  .chart-canvas.tall{ height:300px }
+  .kpi-spark{ height:40px }
+}
+
+/* ── 6 · REDUCED MOTION ──────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  @media(max-width:860px){
+    .top-nav{ scroll-behavior:auto; scroll-snap-type:none }
+  }
+}
+
+/* ── 7 · PRINT · the mobile rail must never reach paper ──────────── */
+@media print{
+  .site-header{ position:static !important }
+}
+</style>
 </body>
 </html>
