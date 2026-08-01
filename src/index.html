@@ -3138,7 +3138,7 @@ html.light #body-bg-video { opacity: 0.35; }
 </head>
 <body>
 <!-- Skip to content (first focusable · WCAG 2.4.1 bypass block) -->
-<a class="skip-link" href="#summary">Skip to content</a>
+<a class="skip-link" href="#main">Skip to content</a>
 <!-- ══ BODY BACKGROUND VIDEO — shows behind all sections ══ -->
 <video id="body-bg-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:-10;pointer-events:none;opacity:0.45;">
   <source src="assets/media/videos/vid_e7b8e07d00ab.mp4" type="video/mp4">
@@ -3190,6 +3190,7 @@ html.light #body-bg-video { opacity: 0.35; }
 <canvas id="particle-canvas" style="display:none" aria-hidden="true"></canvas>
 
 <!-- Floating Glass Navigation -->
+<header class="site-header">
 <nav class="top-nav" id="topNav" aria-label="Primary">
   <a class="brand" href="#cover">
     <span class="brand-mark"><img class="brand-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo"></span>
@@ -3204,8 +3205,10 @@ html.light #body-bg-video { opacity: 0.35; }
   <a class="nav-item" href="#education">Credentials</a>
   <a class="nav-item cta" href="mailto:acc.mohanadibrahim@gmail.com">Contact</a>
 </nav>
+</header>
 
 
+<main id="main">
 <!-- §01 · COVER / HERO -->
 <section id="cover" class="section cover">
   <!-- ══ HERO VIDEO BACKGROUND ══ -->
@@ -4271,8 +4274,9 @@ html.light #body-bg-video { opacity: 0.35; }
     </div>
   </div>
 </section>
+</main>
 
-<div class="footer-stamp reveal">Mohanad Ibrahim · <strong>Executive Portfolio · 2026</strong></div>
+<footer class="footer-stamp reveal">Mohanad Ibrahim · <strong>Executive Portfolio · 2026</strong></footer>
 
 
 <script>
