@@ -868,7 +868,7 @@ body{
   border:1px solid rgba(120,150,220,.12);
   border-radius:99px;
   box-shadow:0 16px 48px -16px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.05) inset;
-  transition:all .45s var(--ease);
+  transition:background .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .45s var(--ease);
   max-width:min(96vw,1200px);
   flex-wrap:wrap;
 }
@@ -905,7 +905,7 @@ body{
   padding:8px 14px;border-radius:99px;
   font-size:12.5px;font-weight:500;
   color:var(--muted);
-  transition:all var(--t-fast);
+  transition:color var(--t-fast),background var(--t-fast),box-shadow var(--t-fast),transform var(--t-fast);
   white-space:nowrap;
 }
 .nav-item:hover{color:#fff;background:rgba(167,139,250,.12)}
@@ -1220,7 +1220,7 @@ strong{color:var(--ink);font-weight:600}
   border:1px solid rgba(255,255,255,.10);
   border-radius:99px;
   letter-spacing:.04em;font-weight:600;
-  transition:all var(--t-base);
+  transition:color var(--t-base),background var(--t-base),border-color var(--t-base),box-shadow var(--t-base),transform var(--t-base);
 }
 .cover-targets span:hover{
   transform:translateY(-2px);
@@ -2473,7 +2473,7 @@ a:focus-visible,button:focus-visible{
   -webkit-backdrop-filter:blur(24px) saturate(180%);
   color:var(--ink);
   text-decoration:none;
-  transition:all .42s cubic-bezier(.16,1,.3,1);
+  transition:background .42s cubic-bezier(.16,1,.3,1),border-color .42s cubic-bezier(.16,1,.3,1),box-shadow .42s cubic-bezier(.16,1,.3,1),transform .42s cubic-bezier(.16,1,.3,1),color .42s cubic-bezier(.16,1,.3,1);
   position:relative;overflow:hidden;
   box-shadow:0 16px 40px -16px rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.04) inset;
 }
@@ -2509,7 +2509,7 @@ a:focus-visible,button:focus-visible{
   border:1px solid rgba(86,180,255,.35);
   color:var(--blue);
   box-shadow:0 6px 18px rgba(86,180,255,.18),inset 0 1px 0 rgba(255,255,255,.10);
-  transition:all var(--t-base);
+  transition:color var(--t-base),background var(--t-base),border-color var(--t-base),box-shadow var(--t-base),transform var(--t-base);
 }
 .brand-cta.linkedin .linkedin-icon{
   color:#56b4ff;
@@ -3204,10 +3204,10 @@ html.light #body-bg-video { opacity: 0.35; }
 
 <!-- Loading Screen -->
 <div id="loader">
-  <img class="loader-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo">
+  <img class="loader-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo" width="160" height="160" decoding="async">
   <div class="loader-brand">M · I</div>
   <div class="loader-bar"></div>
-  <div class="loader-text">Loading Portfolio...</div>
+  <div class="loader-text">Loading Portfolio…</div>
 </div>
 
 <!-- Ambient Orb 3 (hidden) -->
@@ -3218,7 +3218,7 @@ html.light #body-bg-video { opacity: 0.35; }
 <header class="site-header">
 <nav class="top-nav" id="topNav" aria-label="Primary">
   <a class="brand" href="#cover">
-    <span class="brand-mark"><img class="brand-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo"></span>
+    <span class="brand-mark"><img class="brand-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo" width="160" height="160" decoding="async"></span>
     <span>Mohanad Ibrahim</span>
   </a>
   <a class="nav-item" href="#summary">Summary</a>
@@ -3252,7 +3252,7 @@ html.light #body-bg-video { opacity: 0.35; }
       <div class="hero-rings" aria-hidden="true"></div>
       <div class="hero-portrait editorial">
         <div class="hero-portrait-inner">
-          <img src="assets/media/img/img_f47fa94f53f3.jpg" alt="Mohanad Ibrahim — Senior Finance Executive" loading="eager">
+          <img src="assets/media/img/img_f47fa94f53f3.jpg" alt="Mohanad Ibrahim — Senior Finance Executive" loading="eager" fetchpriority="high" width="760" height="1015" decoding="async">
         </div>
       </div>
       <div class="hero-roles">
@@ -3851,7 +3851,7 @@ html.light #body-bg-video { opacity: 0.35; }
   </div>
 
   <h3 class="reveal">DAX KPI Logic · <em>Production-Ready Measures</em></h3>
-  <div class="dax-block reveal"><span class="comment">-- ═══════════════════════════════════════════════════════════</span>
+  <div class="dax-block reveal" translate="no"><span class="comment">-- ═══════════════════════════════════════════════════════════</span>
 <span class="comment">-- REVENUE FAMILY</span>
 <span class="comment">-- ═══════════════════════════════════════════════════════════</span>
 <span class="measure">[Total Revenue]</span> =
@@ -7174,6 +7174,56 @@ main[tabindex="-1"]:focus{ outline:none }
 @media print{
   .site-header{ position:static !important }
 }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     WEB INTERFACE GUIDELINES · 2026
+     Compliance pass against Vercel's Web Interface Guidelines. Declarations
+     the codebase was missing outright; each is additive and inherits the
+     existing palette and motion rules.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="wig-compliance">
+/* ── Native UI must match the theme. Without color-scheme the browser paints
+      scrollbars, form controls and the canvas ground in light chrome over a
+      dark page. The site ships dark and exposes a light mode via html.light,
+      so the value tracks that toggle rather than being hardcoded.          */
+:root{ color-scheme: dark; }
+html.light{ color-scheme: light; }
+
+/* ── Remove the ~300ms double-tap zoom delay on touch. Applied to controls
+      only, so pinch-zoom of content is untouched (never disable zoom).     */
+.nav-item,
+.qj-link,
+.dl-trigger,
+.dv-back,
+.theme-toggle,
+.quick-jump-trigger,
+.back-to-top,
+.skip-link,
+.brand,
+.brand-cta,
+#sp-enter{ touch-action: manipulation; }
+
+/* ── Figures must align in columns. This is a finance portfolio: ratio
+      tables, KPI readouts and stat blocks are read by comparing digits down
+      a column, which proportional numerals break.                          */
+.ratio-table,
+.kpi-value,
+.trust-num,
+.stat-num,
+.metric,
+.chart-card,
+.case-impact,
+.sec-num{ font-variant-numeric: tabular-nums; }
+
+/* ── Headings should not leave a single trailing word on its own line.
+      balance suits short headings; pretty is cheaper for long lead copy.   */
+h1,h2,h3,h4,
+.sp-name,
+.brand-statement-quote{ text-wrap: balance; }
+p,
+.lead{ text-wrap: pretty; }
 </style>
 
 <!-- PWA · register the service worker (offline app shell + installability) -->
