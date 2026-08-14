@@ -275,8 +275,22 @@ Two token systems had coexisted with no bridge between them: the base cinematic 
 `--rd-*` premium scale. A single `--ds-*` semantic layer now aliases both, giving downstream code one
 vocabulary to target.
 
-**Every `--ds-*` token is an alias.** No literal colour, size, or shadow value is introduced or
-altered, so rendering is byte-identical and the layer can be adopted incrementally.
+**Every `--ds-*` token that maps an existing value is an alias**, so no colour, radius, spacing, or
+shadow value is introduced or altered and rendering is byte-identical — the layer can be adopted
+incrementally.
+
+Four tokens are **primitives**, not aliases, because they had no pre-existing counterpart to point
+at:
+
+| Primitive | Value | Why it is not an alias |
+|---|---|---|
+| `--ds-tap-min` | `44px` | The WCAG 2.5.8 touch floor; no prior token expressed it |
+| `--ds-gutter` | `96px` → `14px` | Replaces four hardcoded per-breakpoint `.section` paddings |
+| `--ds-rhythm` | `120px` → `56px` | Same, for vertical rhythm |
+| `--ds-mobile-header-h` | `calc(72px + max(8px, env(safe-area-inset-top)))` | Measured height of the fixed mobile rail; used for anchor offsets |
+
+`--ds-gutter` and `--ds-rhythm` reproduce the existing desktop values exactly at every pre-existing
+breakpoint, so they change nothing above 600px; they only extend the ramp to smaller phones.
 
 ```css
 :root{
@@ -376,7 +390,11 @@ Shadows are low-chroma and cool — they read as depth against navy, not as grey
   the matching nav link. Single source of truth.
 - **Mobile rail** — horizontal scroll with `scroll-snap-type:x proximity` and
   `overscroll-behavior-x:contain` so rail scrolling never chains to the page.
-- **Scroll margin** — `scroll-margin-top:72px` below 860px so anchor targets clear the fixed rail.
+- **Scroll margin** — below 860px, `main` and `.section` carry
+  `scroll-margin-top: var(--ds-mobile-header-h)`, i.e.
+  `calc(72px + max(8px, env(safe-area-inset-top)))`, so anchor targets clear the fixed rail. The
+  72px is the rail's measured height (44px tap-target items plus padding); the inset term covers
+  notched devices, where a flat value leaves headings hidden behind the header.
 
 ### 6.3 Page transitions
 
@@ -446,9 +464,17 @@ Branding → LinkedIn (external) · mailto (external)
 
 ### 7.3 Landmarks
 
-`<header>` (nav) · `<main id="main">` (all 17 sections) · `<footer>` (stamp). The skip link now
-targets `#main` rather than `#summary`, so the bypass block lands on the content region rather than
-the second section. `#topNav` keeps its `<nav aria-label="Primary">` contract intact.
+`<header>` (nav) · `<main id="main" tabindex="-1">` (all 17 sections) · `<footer>` (stamp). The skip
+link now targets `#main` rather than `#summary`, so the bypass block lands on the content region
+rather than the second section. `#topNav` keeps its `<nav aria-label="Primary">` contract intact.
+
+The `tabindex="-1"` is load-bearing, not decoration. A landmark is not focusable by default, so
+fragment navigation moves the scroll position but leaves keyboard focus where it was — the next Tab
+continues from inside the nav, and the bypass block does nothing for the users it exists for.
+`tabindex="-1"` makes the target programmatically focusable without adding it to the tab order.
+Its focus outline is suppressed (`main[tabindex="-1"]:focus{outline:none}`) because such an element
+cannot be reached by tabbing, so the focus is always programmatic and a ring around the entire page
+would be noise rather than information.
 
 ### 7.4 Gestures
 
@@ -499,12 +525,20 @@ Nothing above these blocks was edited except the four landmark elements and the 
 - **No new dependencies, no build step, no network references.** The file stays 100% offline.
 - **Charts untouched.** No dataset, option, colour, or canvas ID was modified — only container
   heights.
-- **`src/index-standalone.html` was deliberately not modified.** It is a separate artifact; syncing
-  it is a distinct decision.
+- **`src/index-standalone.html` is kept in sync.** The same changes were applied to it directly
+  rather than regenerating the build: every asset is already inlined there, so a rebuild would
+  produce a ~41MB diff for no benefit. The edits are applied by an idempotent script that asserts an
+  exact occurrence count of 1 per anchor and checks post-conditions before writing — a silent no-op
+  on a generated file that size would otherwise be very hard to notice.
+- **Validating the standalone.** Nothing in `tests/` reads it, so it has no automated coverage. It is
+  verified by loading it in Chromium from a directory containing **no `assets/` folder**, asserting
+  zero external or failed requests (still self-contained), zero horizontal overflow, 17 sections
+  inside `<main>`, and the full nav link set at 390px.
 - **Adopting the token layer.** `--ds-*` aliases are live but not yet consumed by legacy rules.
   Migration is safe to do incrementally, one component at a time, because each alias resolves to the
   value the legacy rule already uses.
-- **Reverting.** The three commits (landmarks / tokens+mobile / spec) are independent.
+- **Reverting.** The commits are independent and can be reverted individually: landmarks,
+  tokens + mobile layer, spec, the merge with main, the standalone sync, and the review fixes.
 
 ### 8.5 Verification performed
 

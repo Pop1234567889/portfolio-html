@@ -3218,7 +3218,7 @@ html.light #body-bg-video { opacity: 0.35; }
 </header>
 
 
-<main id="main">
+<main id="main" tabindex="-1">
 <!-- §01 · COVER / HERO -->
 <section id="cover" class="section cover">
   <!-- ══ HERO VIDEO BACKGROUND ══ -->
@@ -7071,9 +7071,27 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
     min-height:var(--ds-tap-min);
   }
 
-  /* the fixed rail now occupies real estate at the top of the viewport */
-  .section{ scroll-margin-top:72px }
+  /* The fixed rail occupies real estate at the top of the viewport, so anchor
+     targets must clear it. Measured in Chromium at 390px: the rail renders
+     ~72px tall (44px tap-target items plus padding) and .site-header adds its
+     own top padding on top of that — a flat 72px was already ~8px short even
+     without a notch, and far short with a safe-area inset. Deriving the offset
+     from the rail height plus the inset keeps headings clear on every device.  */
+  :root{
+    --ds-mobile-header-h: calc(72px + max(8px, env(safe-area-inset-top)));
+  }
+  main,
+  .section{ scroll-margin-top:var(--ds-mobile-header-h) }
 }
+
+/* The skip link targets #main. A landmark is not focusable by default, so
+   fragment navigation moves the scroll position but leaves keyboard focus
+   behind — the bypass block then does nothing for the users it exists for.
+   tabindex="-1" makes it programmatically focusable without adding it to the
+   tab order. The outline is suppressed only here: a tabindex="-1" element
+   cannot be reached by tabbing, so this focus is always programmatic and a
+   full-width ring around the whole page would be noise, not information.      */
+main[tabindex="-1"]:focus{ outline:none }
 
 /* ── 3 · TOUCH TARGETS · WCAG 2.5.8 ──────────────────────────────── */
 @media(max-width:860px){
