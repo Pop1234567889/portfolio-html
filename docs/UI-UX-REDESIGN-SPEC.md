@@ -284,7 +284,7 @@ at:
 
 | Primitive | Value | Why it is not an alias |
 |---|---|---|
-| `--ds-tap-min` | `44px` | The WCAG 2.5.8 touch floor; no prior token expressed it |
+| `--ds-tap-min` | `44px` | House touch minimum; no prior token expressed it |
 | `--ds-gutter` | `96px` → `14px` | Replaces four hardcoded per-breakpoint `.section` paddings |
 | `--ds-rhythm` | `120px` → `56px` | Same, for vertical rhythm |
 | `--ds-mobile-header-h` | `calc(72px + max(8px, env(safe-area-inset-top)))` | Measured height of the fixed mobile rail; used for anchor offsets |
@@ -353,7 +353,7 @@ Shadows are low-chroma and cool — they read as depth against navy, not as grey
 | **Detail overlay** (`.dv`) | Sticky `.dv-bar` over scrollable `.dv-body`, focus-trapped, `Escape` to close |
 | **Quick Jump** (`.quick-jump`) | JS-injected `role="menu"`, ≥44px links, active item flagged with a mint dot |
 | **Theme toggle** | 44px, moon/sun SVG swap, repaints charts on switch |
-| **Back to top** | 46px (42px ≤600px) glass circle, appears past 0.9 viewport, returns focus to brand |
+| **Back to top** | 46px (44px ≤600px) glass circle, appears past 0.9 viewport, returns focus to brand |
 | **Skip link** | First focusable, `translateY(-140%)` → `0` on focus, targets `#main` |
 | **Ratio table** | ≤860px `display:block; overflow-x:auto`, all columns preserved |
 | **Chart card** | `radius-md`, glass, canvas 240px / 300px tall on phones |
@@ -386,7 +386,7 @@ Shadows are low-chroma and cool — they read as depth against navy, not as grey
 
 ### 6.2 Navigation behaviour
 
-- **Scroll spy** — rAF-throttled `tickActive()`, sets `.is-active` **and** `aria-current="page"` on
+- **Scroll spy** — rAF-throttled `tickActive()`, sets `.is-active` **and** `aria-current="location"` on
   the matching nav link. Single source of truth.
 - **Mobile rail** — horizontal scroll with `scroll-snap-type:x proximity` and
   `overscroll-behavior-x:contain` so rail scrolling never chains to the page.
@@ -407,7 +407,7 @@ sections are native anchor scrolls, smooth by default and instant under reduced 
 Charts build on the first of four triggers — `IntersectionObserver` (300px margin), capture-phase
 click on any overlay-opening link, deep-link at load, or `requestIdleCallback` (1800ms timeout).
 Every path is idempotent and self-guarding, so a chart can never render empty. Below-fold text
-sections use `content-visibility:auto` with `contain-intrinsic-size: auto 1000px` — no layout shift,
+sections use `content-visibility:auto` with `contain-intrinsic-size: auto 1000px` — reduced layout shift,
 no anchor drift.
 
 ### 6.5 Button and control states
@@ -456,7 +456,7 @@ touching this later:
 
 ```
 Splash → Cover
-Cover  → any of 16 sections (nav rail · Quick Jump · scroll)
+Cover  → any of the other 16 sections (nav rail · Quick Jump · scroll)
 Section (collapsed row) → Detail overlay → back → Section
 Dashboard → chart overlay → back
 Branding → LinkedIn (external) · mailto (external)

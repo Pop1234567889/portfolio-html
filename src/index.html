@@ -4804,7 +4804,7 @@ function __buildDashboardCharts() {
         if (it.target.offsetTop <= y) current = it;
       }
       links.forEach(l => { l.classList.remove('is-active'); l.removeAttribute('aria-current'); });
-      if (current){ current.link.classList.add('is-active'); current.link.setAttribute('aria-current', 'page'); }
+      if (current){ current.link.classList.add('is-active'); current.link.setAttribute('aria-current', 'location'); }
       activeTicking = false;
     }
     window.addEventListener('scroll', () => {
@@ -6824,8 +6824,10 @@ html.dl-ready section.section:not(#cover):not(#summary):not(#branding):hover::be
 .skip-link:focus,
 .skip-link:focus-visible{ transform:translateY(0); outline:2px solid #56b4ff; outline-offset:2px; }
 
-/* ── aria-current mirrors .is-active on the top nav (styling already present) ── */
-.top-nav .nav-item[aria-current="page"]{ color:#fff; }
+/* ── aria-current mirrors .is-active on the top nav (styling already present).
+      Value is "location", not "page": these links move within a single document
+      rather than between pages in a set. ── */
+.top-nav .nav-item[aria-current="location"]{ color:#fff; }
 
 /* ── Back to top ── */
 .back-to-top{
@@ -6856,7 +6858,7 @@ html.light .back-to-top{
   box-shadow:0 12px 30px -10px rgba(15,23,42,.28);
 }
 html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgba(15,23,42,.24); }
-@media(max-width:600px){ .back-to-top{ right:16px;bottom:16px;width:42px;height:42px; } }
+@media(max-width:600px){ .back-to-top{ right:16px;bottom:16px;width:44px;height:44px; } }
 
 /* ── Performance: skip rendering of below-the-fold text sections until near
       viewport. Chart/canvas, hero and reveal-measured sections are excluded.
@@ -6972,7 +6974,10 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
   /* ── TYPE ─────────────────────────────────────────────────────── */
   --ds-font-ui:           var(--rd-font);
 
-  /* ── TOUCH TARGET · WCAG 2.5.8 floor ──────────────────────────── */
+  /* ── TOUCH TARGET · project standard ──────────────────────────────
+     44px is the WCAG 2.5.5 Target Size (Enhanced, AAA) figure, adopted
+     here as the house minimum. The AA criterion, 2.5.8 Target Size
+     (Minimum), is only 24px — this is deliberately stricter than AA.   */
   --ds-tap-min:           44px;
 
   /* ── SECTION GUTTER · drives the responsive tiers below ───────── */
@@ -7093,7 +7098,7 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
    full-width ring around the whole page would be noise, not information.      */
 main[tabindex="-1"]:focus{ outline:none }
 
-/* ── 3 · TOUCH TARGETS · WCAG 2.5.8 ──────────────────────────────── */
+/* ── 3 · TOUCH TARGETS · 44px house minimum (WCAG 2.5.5 AAA) ─────── */
 @media(max-width:860px){
   .qj-link{
     min-height:var(--ds-tap-min);
