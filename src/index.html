@@ -868,7 +868,7 @@ body{
   border:1px solid rgba(120,150,220,.12);
   border-radius:99px;
   box-shadow:0 16px 48px -16px rgba(0,0,0,.6),0 1px 0 rgba(255,255,255,.05) inset;
-  transition:all .45s var(--ease);
+  transition:background .45s var(--ease),border-color .45s var(--ease),box-shadow .45s var(--ease),transform .45s var(--ease);
   max-width:min(96vw,1200px);
   flex-wrap:wrap;
 }
@@ -905,7 +905,7 @@ body{
   padding:8px 14px;border-radius:99px;
   font-size:12.5px;font-weight:500;
   color:var(--muted);
-  transition:all var(--t-fast);
+  transition:color var(--t-fast),background var(--t-fast),box-shadow var(--t-fast),transform var(--t-fast);
   white-space:nowrap;
 }
 .nav-item:hover{color:#fff;background:rgba(167,139,250,.12)}
@@ -1220,7 +1220,7 @@ strong{color:var(--ink);font-weight:600}
   border:1px solid rgba(255,255,255,.10);
   border-radius:99px;
   letter-spacing:.04em;font-weight:600;
-  transition:all var(--t-base);
+  transition:color var(--t-base),background var(--t-base),border-color var(--t-base),box-shadow var(--t-base),transform var(--t-base);
 }
 .cover-targets span:hover{
   transform:translateY(-2px);
@@ -2473,7 +2473,7 @@ a:focus-visible,button:focus-visible{
   -webkit-backdrop-filter:blur(24px) saturate(180%);
   color:var(--ink);
   text-decoration:none;
-  transition:all .42s cubic-bezier(.16,1,.3,1);
+  transition:background .42s cubic-bezier(.16,1,.3,1),border-color .42s cubic-bezier(.16,1,.3,1),box-shadow .42s cubic-bezier(.16,1,.3,1),transform .42s cubic-bezier(.16,1,.3,1),color .42s cubic-bezier(.16,1,.3,1);
   position:relative;overflow:hidden;
   box-shadow:0 16px 40px -16px rgba(0,0,0,.55),0 1px 0 rgba(255,255,255,.04) inset;
 }
@@ -2509,7 +2509,7 @@ a:focus-visible,button:focus-visible{
   border:1px solid rgba(86,180,255,.35);
   color:var(--blue);
   box-shadow:0 6px 18px rgba(86,180,255,.18),inset 0 1px 0 rgba(255,255,255,.10);
-  transition:all var(--t-base);
+  transition:color var(--t-base),background var(--t-base),border-color var(--t-base),box-shadow var(--t-base),transform var(--t-base);
 }
 .brand-cta.linkedin .linkedin-icon{
   color:#56b4ff;
@@ -3145,10 +3145,25 @@ html.light .hero-cta.ghost {
 #body-bg-video { opacity: 0.45; }
 html.light #body-bg-video { opacity: 0.35; }
 </style>
+<!-- No-JS safety net · the splash is a JS-driven gate.
+     #splash is position:fixed, inset:0, z-index:99999 and is dismissed only by
+     the #sp-enter click handler, so without JavaScript it covers the entire
+     document permanently and nothing behind it can be reached. Hiding it when
+     scripting is unavailable keeps the content reachable, per the project rule
+     that nothing may depend on JavaScript to be reachable. -->
+<noscript><style>
+  /* Two full-viewport overlays are dismissed only by script:
+       #splash  position:fixed inset:0 z-index:99999, cleared by the #sp-enter handler
+       #loader  position:fixed inset:0 z-index:9999,  cleared by adding .hidden
+     Without scripting both persist and the document behind them is unreachable. */
+  #splash,
+  #loader{ display:none !important; }
+  body.splash-lock{ overflow:auto !important; }
+</style></noscript>
 </head>
 <body>
 <!-- Skip to content (first focusable · WCAG 2.4.1 bypass block) -->
-<a class="skip-link" href="#summary">Skip to content</a>
+<a class="skip-link" href="#main">Skip to content</a>
 <!-- ══ BODY BACKGROUND VIDEO — shows behind all sections ══ -->
 <video id="body-bg-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true" style="position:fixed;inset:0;width:100vw;height:100vh;object-fit:cover;z-index:-10;pointer-events:none;opacity:0.45;">
   <source src="assets/media/videos/vid_e7b8e07d00ab.mp4" type="video/mp4">
@@ -3189,10 +3204,10 @@ html.light #body-bg-video { opacity: 0.35; }
 
 <!-- Loading Screen -->
 <div id="loader">
-  <img class="loader-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo">
+  <img class="loader-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo" width="160" height="160" decoding="async">
   <div class="loader-brand">M · I</div>
   <div class="loader-bar"></div>
-  <div class="loader-text">Loading Portfolio...</div>
+  <div class="loader-text">Loading Portfolio…</div>
 </div>
 
 <!-- Ambient Orb 3 (hidden) -->
@@ -3200,9 +3215,10 @@ html.light #body-bg-video { opacity: 0.35; }
 <canvas id="particle-canvas" style="display:none" aria-hidden="true"></canvas>
 
 <!-- Floating Glass Navigation -->
+<header class="site-header">
 <nav class="top-nav" id="topNav" aria-label="Primary">
   <a class="brand" href="#cover">
-    <span class="brand-mark"><img class="brand-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo"></span>
+    <span class="brand-mark"><img class="brand-logo" src="assets/media/img/img_e0db44789aca.png" alt="Mohanad Ibrahim logo" width="160" height="160" decoding="async"></span>
     <span>Mohanad Ibrahim</span>
   </a>
   <a class="nav-item" href="#summary">Summary</a>
@@ -3214,8 +3230,10 @@ html.light #body-bg-video { opacity: 0.35; }
   <a class="nav-item" href="#education">Credentials</a>
   <a class="nav-item cta" href="mailto:acc.mohanadibrahim@gmail.com">Contact</a>
 </nav>
+</header>
 
 
+<main id="main" tabindex="-1">
 <!-- §01 · COVER / HERO -->
 <section id="cover" class="section cover">
   <!-- ══ HERO VIDEO BACKGROUND ══ -->
@@ -3234,7 +3252,7 @@ html.light #body-bg-video { opacity: 0.35; }
       <div class="hero-rings" aria-hidden="true"></div>
       <div class="hero-portrait editorial">
         <div class="hero-portrait-inner">
-          <img src="assets/media/img/img_f47fa94f53f3.jpg" alt="Mohanad Ibrahim — Senior Finance Executive" loading="eager">
+          <img src="assets/media/img/img_f47fa94f53f3.jpg" alt="Mohanad Ibrahim — Senior Finance Executive" loading="eager" fetchpriority="high" width="760" height="1015" decoding="async">
         </div>
       </div>
       <div class="hero-roles">
@@ -3833,7 +3851,7 @@ html.light #body-bg-video { opacity: 0.35; }
   </div>
 
   <h3 class="reveal">DAX KPI Logic · <em>Production-Ready Measures</em></h3>
-  <div class="dax-block reveal"><span class="comment">-- ═══════════════════════════════════════════════════════════</span>
+  <div class="dax-block reveal" translate="no"><span class="comment">-- ═══════════════════════════════════════════════════════════</span>
 <span class="comment">-- REVENUE FAMILY</span>
 <span class="comment">-- ═══════════════════════════════════════════════════════════</span>
 <span class="measure">[Total Revenue]</span> =
@@ -4281,8 +4299,9 @@ html.light #body-bg-video { opacity: 0.35; }
     </div>
   </div>
 </section>
+</main>
 
-<div class="footer-stamp reveal">Mohanad Ibrahim · <strong>Executive Portfolio · 2026</strong></div>
+<footer class="footer-stamp reveal">Mohanad Ibrahim · <strong>Executive Portfolio · 2026</strong></footer>
 
 
 <script>
@@ -4423,7 +4442,13 @@ document.querySelectorAll('.top-nav a[href^="#"]').forEach(link => {
     e.preventDefault();
     const target = document.querySelector(this.getAttribute('href'));
     if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      /* Honour prefers-reduced-motion. The global `html{scroll-behavior:auto}`
+         rule only governs CSS-driven scrolling -- an explicit behavior:'smooth'
+         here overrides it, so the preference must be checked in JS. Queried per
+         click rather than cached so a mid-session preference change is picked
+         up. Matches the guard the back-to-top control already uses. */
+      const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+      target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
     }
   });
 });
@@ -4800,7 +4825,7 @@ function __buildDashboardCharts() {
         if (it.target.offsetTop <= y) current = it;
       }
       links.forEach(l => { l.classList.remove('is-active'); l.removeAttribute('aria-current'); });
-      if (current){ current.link.classList.add('is-active'); current.link.setAttribute('aria-current', 'page'); }
+      if (current){ current.link.classList.add('is-active'); current.link.setAttribute('aria-current', 'location'); }
       activeTicking = false;
     }
     window.addEventListener('scroll', () => {
@@ -6820,8 +6845,10 @@ html.dl-ready section.section:not(#cover):not(#summary):not(#branding):hover::be
 .skip-link:focus,
 .skip-link:focus-visible{ transform:translateY(0); outline:2px solid #56b4ff; outline-offset:2px; }
 
-/* ── aria-current mirrors .is-active on the top nav (styling already present) ── */
-.top-nav .nav-item[aria-current="page"]{ color:#fff; }
+/* ── aria-current mirrors .is-active on the top nav (styling already present).
+      Value is "location", not "page": these links move within a single document
+      rather than between pages in a set. ── */
+.top-nav .nav-item[aria-current="location"]{ color:#fff; }
 
 /* ── Back to top ── */
 .back-to-top{
@@ -6852,7 +6879,7 @@ html.light .back-to-top{
   box-shadow:0 12px 30px -10px rgba(15,23,42,.28);
 }
 html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgba(15,23,42,.24); }
-@media(max-width:600px){ .back-to-top{ right:16px;bottom:16px;width:42px;height:42px; } }
+@media(max-width:600px){ .back-to-top{ right:16px;bottom:16px;width:44px;height:44px; } }
 
 /* ── Performance: skip rendering of below-the-fold text sections until near
       viewport. Chart/canvas, hero and reveal-measured sections are excluded.
@@ -6904,6 +6931,300 @@ html.light .back-to-top:hover{ background:rgba(255,255,255,.94);border-color:rgb
   update();
 })();
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     UNIFIED DESIGN TOKENS · 2026
+     Single semantic layer bridging the two pre-existing token systems:
+       · the base cinematic palette   (--bg-*, --ink-*, --mint, --blue, …)
+       · the --rd-* premium scale     (--rd-r-*, --rd-s-*, --rd-ink-*, …)
+     Every --ds-* token is an ALIAS. No literal colour, size, or shadow value
+     is introduced or altered here, so rendering is byte-identical. This block
+     exists to give downstream code one vocabulary to target.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="design-tokens">
+:root{
+  /* ── SURFACE RAMP ─────────────────────────────────────────────── */
+  --ds-surface-base:      var(--bg-0);
+  --ds-surface-raised:    var(--bg-1);
+  --ds-surface-overlay:   var(--bg-2);
+  --ds-surface-glass:     var(--rd-surface);
+  --ds-surface-glass-2:   var(--rd-surface-2);
+  --ds-surface-glass-3:   var(--rd-surface-3);
+  --ds-surface-inset:     var(--rd-inset);
+
+  /* ── INK RAMP · AA-lifted on dark ─────────────────────────────── */
+  --ds-ink-primary:       var(--rd-ink);
+  --ds-ink-secondary:     var(--rd-ink-2);
+  --ds-ink-tertiary:      var(--rd-ink-3);
+  --ds-ink-muted:         var(--rd-ink-4);
+  --ds-ink-inverse:       var(--ink-inv);
+
+  /* ── HAIRLINES ────────────────────────────────────────────────── */
+  --ds-line:              var(--rd-line);
+  --ds-line-strong:       var(--rd-line-2);
+  --ds-line-hover:        var(--rd-line-hover);
+
+  /* ── ACCENTS · semantic mapping of the cinematic palette ──────── */
+  --ds-accent-primary:    var(--blue);     /* interactive / focus     */
+  --ds-accent-success:    var(--mint);     /* positive delta · CTA    */
+  --ds-accent-brand:      var(--violet);   /* brand / section accent  */
+  --ds-accent-warning:    var(--gold);     /* caution · pending       */
+  --ds-accent-danger:     var(--coral);    /* negative delta          */
+
+  /* ── SPACING · 8pt rhythm ─────────────────────────────────────── */
+  --ds-space-1:           var(--rd-s-1);   /*  8px */
+  --ds-space-2:           var(--rd-s-2);   /* 16px */
+  --ds-space-3:           var(--rd-s-3);   /* 24px */
+  --ds-space-4:           var(--rd-s-4);   /* 32px */
+  --ds-space-5:           var(--rd-s-5);   /* 40px */
+  --ds-space-6:           var(--rd-s-6);   /* 48px */
+
+  /* ── RADIUS ───────────────────────────────────────────────────── */
+  --ds-radius-sm:         var(--rd-r-sm);  /* 12px */
+  --ds-radius-md:         var(--rd-r-md);  /* 16px */
+  --ds-radius-lg:         var(--rd-r-lg);  /* 20px */
+  --ds-radius-xl:         var(--rd-r-xl);  /* 24px */
+  --ds-radius-pill:       var(--rd-r-pill);
+
+  /* ── ELEVATION ────────────────────────────────────────────────── */
+  --ds-elevation-1:       var(--rd-shadow);
+  --ds-elevation-2:       var(--rd-shadow-2);
+  --ds-focus-ring:        var(--rd-ring);
+
+  /* ── TYPE ─────────────────────────────────────────────────────── */
+  --ds-font-ui:           var(--rd-font);
+
+  /* ── TOUCH TARGET · project standard ──────────────────────────────
+     44px is the WCAG 2.5.5 Target Size (Enhanced, AAA) figure, adopted
+     here as the house minimum. The AA criterion, 2.5.8 Target Size
+     (Minimum), is only 24px — this is deliberately stricter than AA.   */
+  --ds-tap-min:           44px;
+
+  /* ── SECTION GUTTER · drives the responsive tiers below ───────── */
+  --ds-gutter:            96px;
+  --ds-rhythm:            120px;
+}
+
+@media(max-width:1280px){ :root{ --ds-gutter:56px; --ds-rhythm:104px } }
+@media(max-width:1024px){ :root{ --ds-gutter:40px; --ds-rhythm:96px  } }
+@media(max-width:720px){  :root{ --ds-gutter:22px; --ds-rhythm:88px  } }
+@media(max-width:600px){  :root{ --ds-gutter:18px; --ds-rhythm:72px  } }
+@media(max-width:420px){  :root{ --ds-gutter:16px; --ds-rhythm:64px  } }
+@media(max-width:360px){  :root{ --ds-gutter:14px; --ds-rhythm:56px  } }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     MOBILE LAYER · 2026
+     Phone-tier wayfinding, spacing rhythm, touch targets, and data-surface
+     overflow. Desktop rendering (>860px) is deliberately untouched.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="mobile-layer">
+
+/* ── 1 · SECTION RHYTHM below 600px ────────────────────────────────
+   The pre-existing tiers stop at 720px. These continue the ramp using
+   the token scale so small phones stop wasting a third of the viewport
+   on padding. Sections keep min-height:auto from the 720px tier.       */
+@media(max-width:600px){
+  .section{ padding:var(--ds-rhythm) var(--ds-gutter) }
+  .sec-num{ right:var(--ds-gutter) }
+}
+
+/* ── 2 · MOBILE WAYFINDING ────────────────────────────────────────
+   Previously every .nav-item:not(.cta) was display:none below 860px,
+   leaving only the brand and the mailto CTA — and Quick Jump, which is
+   JS-injected, so a phone with JS disabled had no section links at all.
+   The links are restored as a horizontally scrollable rail. Quick Jump
+   remains as the progressive enhancement on top.                       */
+@media(max-width:860px){
+  .site-header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    padding-top:max(8px, env(safe-area-inset-top));
+  }
+  .top-nav{
+    position:static; transform:none;
+    left:auto; top:auto;
+    margin:0 8px;
+    border-radius:var(--ds-radius-lg);
+    padding:6px 8px;
+    gap:2px;
+    display:flex; flex-wrap:nowrap; align-items:center;
+    /* must beat .top-nav{justify-content:center} from the ≤720px tier:
+       centering a scrollable flex container overflows on BOTH sides and
+       makes the leading items unreachable. */
+    justify-content:flex-start;
+    overflow-x:auto; overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+    overscroll-behavior-x:contain;
+  }
+  .top-nav::-webkit-scrollbar{ display:none }
+
+  /* Restore the section links the old rules hid. Two rules hid them:
+       ≤860px  .top-nav .nav-item:not(.cta)                              (0,3,0)
+       ≤720px  .nav-item:not(.cta):not(.brand) ~ .nav-item:not(.cta)     (0,5,0)
+     The second outranks a plain override, so it is matched here at (0,6,0). */
+  .top-nav .nav-item:not(.cta){ display:inline-flex }
+  .top-nav .nav-item:not(.cta):not(.brand) ~ .nav-item:not(.cta){ display:inline-flex }
+
+  /* The brand scrolls with the rail rather than pinning. A sticky brand over
+     a translucent glass bar lets the scrolled links bleed through underneath,
+     and an opaque backing would break the glassmorphic treatment. */
+  .top-nav .brand{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    padding-right:6px;
+  }
+  .top-nav .brand span:not(.brand-mark){
+    max-width:0; overflow:hidden; white-space:nowrap;
+    opacity:0; transition:none;
+  }
+
+  .top-nav .nav-item{
+    flex:0 0 auto;
+    scroll-snap-align:start;
+    display:inline-flex; align-items:center;
+    min-height:var(--ds-tap-min);
+    padding:0 12px;
+    font-size:12.5px;
+    white-space:nowrap;
+  }
+  .top-nav .nav-item.cta{
+    margin-left:4px;
+    padding:0 16px;
+    min-height:var(--ds-tap-min);
+  }
+
+  /* The fixed rail occupies real estate at the top of the viewport, so anchor
+     targets must clear it. Measured in Chromium at 390px: the rail renders
+     ~72px tall (44px tap-target items plus padding) and .site-header adds its
+     own top padding on top of that — a flat 72px was already ~8px short even
+     without a notch, and far short with a safe-area inset. Deriving the offset
+     from the rail height plus the inset keeps headings clear on every device.  */
+  :root{
+    --ds-mobile-header-h: calc(72px + max(8px, env(safe-area-inset-top)));
+  }
+  main,
+  .section{ scroll-margin-top:var(--ds-mobile-header-h) }
+}
+
+/* The skip link targets #main. A landmark is not focusable by default, so
+   fragment navigation moves the scroll position but leaves keyboard focus
+   behind — the bypass block then does nothing for the users it exists for.
+   tabindex="-1" makes it programmatically focusable without adding it to the
+   tab order. The outline is suppressed only here: a tabindex="-1" element
+   cannot be reached by tabbing, so this focus is always programmatic and a
+   full-width ring around the whole page would be noise, not information.      */
+main[tabindex="-1"]:focus{ outline:none }
+
+/* ── 3 · TOUCH TARGETS · 44px house minimum (WCAG 2.5.5 AAA) ─────── */
+@media(max-width:860px){
+  .qj-link{
+    min-height:var(--ds-tap-min);
+    display:flex; align-items:center;
+  }
+  .dl-trigger .dl-go{
+    width:var(--ds-tap-min); height:var(--ds-tap-min);
+  }
+  .dl-trigger .dl-go svg{ width:18px; height:18px }
+  .theme-toggle,.quick-jump-trigger{
+    min-height:var(--ds-tap-min);
+  }
+  .dv-back{ min-height:var(--ds-tap-min) }
+}
+
+/* ── 4 · DATA SURFACES · horizontal overflow containment ──────────
+   .ratio-table is a 5-column border-collapse table with 16-18px cell
+   padding — it cannot reflow below ~520px without truncating content.
+   Every column and every cell is preserved; the table scrolls inside
+   its own container so the page body never scrolls horizontally.      */
+@media(max-width:860px){
+  .ratio-table{
+    display:block;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    white-space:nowrap;
+    border-collapse:collapse;
+  }
+  .ratio-table thead th{ padding:12px 14px; font-size:10px }
+  .ratio-table tbody td{ padding:12px 14px; font-size:12px }
+}
+
+/* ── 5 · CHART LEGIBILITY on phones ───────────────────────────────
+   .chart-grid already collapses to one column at 1024px, but the
+   canvases keep desktop heights. No Chart.js dataset or option is
+   touched — only the container box.                                   */
+@media(max-width:600px){
+  .chart-canvas{ height:240px }
+  .chart-canvas.tall{ height:300px }
+  .kpi-spark{ height:40px }
+}
+
+/* ── 6 · REDUCED MOTION ──────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  @media(max-width:860px){
+    .top-nav{ scroll-behavior:auto; scroll-snap-type:none }
+  }
+}
+
+/* ── 7 · PRINT · the mobile rail must never reach paper ──────────── */
+@media print{
+  .site-header{ position:static !important }
+}
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     WEB INTERFACE GUIDELINES · 2026
+     Compliance pass against Vercel's Web Interface Guidelines. Declarations
+     the codebase was missing outright; each is additive and inherits the
+     existing palette and motion rules.
+     Additive · last in cascade.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style id="wig-compliance">
+/* ── Native UI must match the theme. Without color-scheme the browser paints
+      scrollbars, form controls and the canvas ground in light chrome over a
+      dark page. The site ships dark and exposes a light mode via html.light,
+      so the value tracks that toggle rather than being hardcoded.          */
+:root{ color-scheme: dark; }
+html.light{ color-scheme: light; }
+
+/* ── Remove the ~300ms double-tap zoom delay on touch. Applied to controls
+      only, so pinch-zoom of content is untouched (never disable zoom).     */
+.nav-item,
+.qj-link,
+.dl-trigger,
+.dv-back,
+.theme-toggle,
+.quick-jump-trigger,
+.back-to-top,
+.skip-link,
+.brand,
+.brand-cta,
+#sp-enter{ touch-action: manipulation; }
+
+/* ── Figures must align in columns. This is a finance portfolio: ratio
+      tables, KPI readouts and stat blocks are read by comparing digits down
+      a column, which proportional numerals break.                          */
+.ratio-table,
+.kpi-value,
+.trust-num,
+.stat-num,
+.metric,
+.chart-card,
+.case-impact,
+.sec-num{ font-variant-numeric: tabular-nums; }
+
+/* ── Headings should not leave a single trailing word on its own line.
+      balance suits short headings; pretty is cheaper for long lead copy.   */
+h1,h2,h3,h4,
+.sp-name,
+.brand-statement-quote{ text-wrap: balance; }
+p,
+.lead{ text-wrap: pretty; }
+</style>
 
 <!-- PWA · register the service worker (offline app shell + installability) -->
 <script id="pwa-sw-register">
