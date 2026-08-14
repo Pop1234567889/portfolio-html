@@ -3145,6 +3145,21 @@ html.light .hero-cta.ghost {
 #body-bg-video { opacity: 0.45; }
 html.light #body-bg-video { opacity: 0.35; }
 </style>
+<!-- No-JS safety net · the splash is a JS-driven gate.
+     #splash is position:fixed, inset:0, z-index:99999 and is dismissed only by
+     the #sp-enter click handler, so without JavaScript it covers the entire
+     document permanently and nothing behind it can be reached. Hiding it when
+     scripting is unavailable keeps the content reachable, per the project rule
+     that nothing may depend on JavaScript to be reachable. -->
+<noscript><style>
+  /* Two full-viewport overlays are dismissed only by script:
+       #splash  position:fixed inset:0 z-index:99999, cleared by the #sp-enter handler
+       #loader  position:fixed inset:0 z-index:9999,  cleared by adding .hidden
+     Without scripting both persist and the document behind them is unreachable. */
+  #splash,
+  #loader{ display:none !important; }
+  body.splash-lock{ overflow:auto !important; }
+</style></noscript>
 </head>
 <body>
 <!-- Skip to content (first focusable · WCAG 2.4.1 bypass block) -->
